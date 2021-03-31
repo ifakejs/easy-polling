@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+<button class="start">开始</button>
+<button class="end">结束</button>
+<button class="update">改变时间间隔</button>
+<script src="dist/index.umd.js"></script>
+<script>
+  const instance = new window.EasyPolling.EasyPolling({
+    type: "single",
+    source: [1, 2, 3, 4, 5],
+    returnCount: 2,
+    intervalTime: 2000
+  })
+
+  instance.observe(cb => {
+    console.log(cb)
+  })
+
+  document.querySelector(".start").addEventListener("click", () => {
+    instance.start()
+  })
+  document.querySelector(".end").addEventListener("click", () => {
+    instance.stop()
+  })
+  document.querySelector(".update").addEventListener("click", () => {
+    instance.updateIntervalTime(5000)
+  })
+
+</script>
+</body>
+</html>
