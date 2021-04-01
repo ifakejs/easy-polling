@@ -10,8 +10,23 @@ The scaffolding for this project is from [pkg](https://github.com/ifakejs/pkg)
 ### 🏠 [Homepage](https://github.com/ifakejs/easy-polling)
 
 ### Usage
-```sh
-import { EasyPolling } from "@ifake/easy-polling";
+- Browser
+
+```js
+// We expose a global variable that can be used directly in the browser.
+
+const EasyPolling = window.EasyPolling
+```
+
+- ES6 Module
+
+```js
+import { EasyPolling } from "@ifake/easy-polling"
+```
+
+**demo**
+```js
+import { EasyPolling } from "@ifake/easy-polling"
 
 const instance = new EasyPolling({
   source: [param1, param2, param3...],
@@ -28,6 +43,21 @@ instance.stop()
 
 // update intervalTime
 instance.updateIntervalTime(5000)
+```
+
+### API
+**EasyPolling(options)**
+
+**options**
+```ts
+type runType = "single" | "double"
+
+interface EasyPollingOptions {
+  type: runType // polling type
+  source: any[] // Data source
+  intervalTime: number // ms
+  returnCount: number // Data returned in one cycle
+}
 ```
 
 ## Author

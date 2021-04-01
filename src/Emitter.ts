@@ -3,7 +3,7 @@
  * Simple publish-subscribe class
  */
 export class Emitter {
-  emitterList: Record<any, Function[]>
+  emitterList: Record<string, Function[]>
   constructor() {
     this.emitterList = {}
   }
@@ -13,6 +13,7 @@ export class Emitter {
     }
     this.emitterList[key].push(fn)
   }
+  // TODO can be refactor as (key, ...arg), ensure the key type
   trigger(...arg: any[]) {
     const fnName = arg[0]
     const args = arg.splice(1)

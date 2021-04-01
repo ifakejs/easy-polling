@@ -9,7 +9,7 @@
     "build": "cross-env NODE_ENV=production rollup -c rollup.config.ts",
     "build:types": "tsc -p tsconfig.type.json && api-extractor run && rimraf ./temp",
     "test": "jest",
-    "demo": "serve -l 8986",
+    "start:demo": "serve -l 8986",
     "release": "ts-node --project tsconfig.build.json scripts/release.ts"
   },
   "files": [
