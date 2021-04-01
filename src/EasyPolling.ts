@@ -1,7 +1,7 @@
 import { Q } from './Q'
 import { Emitter } from "./Emitter"
 import { FakeInterval } from "./FakeInterval"
-import { assert, chunk } from "./utils";
+import {assert, checkPollingNumber, chunk} from "./utils";
 
 /**
  * 一. 单路:
@@ -42,8 +42,8 @@ export class EasyPolling extends Emitter {
     const { source, intervalTime, returnCount, type } = options
 
     assert(Array.isArray(source), "Required array for source type.")
-    assert(!!intervalTime, "Required a number type for intervalTime")
-    assert(!!returnCount, "Required a number type for returnCount")
+    assert(checkPollingNumber(intervalTime), "Required a number type for intervalTime")
+    assert(checkPollingNumber(returnCount), "Required a number type for returnCount")
 
     const checkType = RunTypes.SINGLE === type || RunTypes.DOUBLE === type
     assert(checkType, "Valid type value is 'single' or 'double'")

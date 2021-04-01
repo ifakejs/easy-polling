@@ -29,3 +29,7 @@ export function chunk<T extends any>(array: T[], step = 1) {
   }
   return res
 }
+
+export function checkPollingNumber(value: number) {
+  return typeof value === "number" && value > 0
+}
