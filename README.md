@@ -9,6 +9,15 @@
 
 ### 🏠 [Homepage](https://github.com/ifakejs/easy-polling)
 
+### 安装
+
+```sh
+npm install @ifake/easy-polling
+
+# or
+yarn add @ifake/easy-polling
+```
+
 ### 使用
 - 浏览器端
 
