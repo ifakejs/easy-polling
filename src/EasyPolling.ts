@@ -7,8 +7,8 @@ import { chunk } from "./chunk"
  * 一. 单路:
  * 1. 数据项加入队列
  * 2. 初始化取出初始化需要的数据(returnCount)
- * 3. 轮巡开始时每次取一个(队列的头部永远是即将要返回的), 同时维护一个播放队列索引(为了记录每个数据在当前运行中的位置)
- * 4. 轮巡时,每次取一个即将要返回的，索引队列取出它的位置，进行播放列表替换位置, 返回最新数据, 然后将数据入队
+ * 3. 轮询开始时每次取一个(队列的头部永远是即将要返回的), 同时维护一个播放队列索引(为了记录每个数据在当前运行中的位置)
+ * 4. 轮询时,每次取一个即将要返回的，索引队列取出它的位置，进行播放列表替换位置, 返回最新数据, 然后将数据入队
  * 二. 多路
  * 1. 分组(根据returnCount)确定每一次返回的数据, 并加入队列
  * 2. 初始化数据
@@ -90,14 +90,14 @@ export class EasyPolling extends Emitter {
     this.runTimer = new FakeInterval()
     // 初始化队列数据
     this.initQueue()
-    // 轮巡之前的第一轮数据初始化
+    // 轮询之前的第一轮数据初始化
     await this.beforeStart()
-    // 开始轮巡
+    // 开始轮询
     this.runTimer.run(this.runAdapter.bind(this), this.options.intervalTime)
   }
 
   /**
-   * 轮巡开始前取出初始化数据
+   * 轮询开始前取出初始化数据
    */
   beforeStart() {
     const { type } = this.options

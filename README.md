@@ -3,7 +3,7 @@
 ![Npm Bundle Size](https://img.shields.io/bundlephobia/min/@ifake/easy-polling)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-> 针对视频多屏播放需求: 轮询策略，包括单路依次轮询和多路同时轮巡..
+> 针对视频多屏播放需求: 轮询策略，包括单路依次轮询和多路同时轮询..
 
 本项目的脚手架来自 [pkg](https://github.com/ifakejs/pkg)
 
