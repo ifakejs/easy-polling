@@ -1,20 +1,19 @@
-# Welcome to @ifake/easy-polling 👋
+# 欢迎使用 @ifake/easy-polling 👋
 ![Version](https://img.shields.io/npm/v/@ifake/easy-polling)
 ![Npm Bundle Size](https://img.shields.io/bundlephobia/min/@ifake/easy-polling)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-> The Class used to compute the next step of data.
+> 针对视频多屏播放需求: 轮询策略，包括单路依次轮询和多路同时轮巡..
 
-The scaffolding for this project is from [pkg](https://github.com/ifakejs/pkg)
+本项目的脚手架来自 [pkg](https://github.com/ifakejs/pkg)
 
 ### 🏠 [Homepage](https://github.com/ifakejs/easy-polling)
 
-### Usage
-- Browser
+### 使用
+- 浏览器端
 
 ```js
-// We expose a global variable that can be used directly in the browser.
-
+// 我们提供了一个全局变量 `EasyPolling` 以便使用CDN时直接在浏览器端使用.
 const EasyPolling = window.EasyPolling
 ```
 
@@ -24,18 +23,18 @@ const EasyPolling = window.EasyPolling
 import { EasyPolling } from "@ifake/easy-polling"
 ```
 
-**demo**
+### DEMO
+
 ```js
 import { EasyPolling } from "@ifake/easy-polling"
 
 const instance = new EasyPolling({
   source: [param1, param2, param3...],
-  intervalTime: 2000 // 毫秒
+  intervalTime: 2000
   type: 'single' || 'double'
-  returnCount: 2 // 每次返回的数据大小
+  returnCount: 2
 })
 instance.observe((data) => {
-  // 根据间隔时长，返回对应的内容
 })
 instance.start()
 // stop
@@ -45,10 +44,26 @@ instance.stop()
 instance.updateIntervalTime(5000)
 ```
 
-### API
-**EasyPolling(options)**
+### 本地运行
 
-**options**
+```sh
+git clone https://github.com/ifakejs/easy-polling.git
+
+cd easy-polling
+
+yarn
+
+yarn start
+
+// 新打开命令行
+yarn start:demo
+```
+
+### API
+
+#### EasyPolling [Class]
+
+- 参数
 ```ts
 type runType = "single" | "double"
 
@@ -60,16 +75,35 @@ interface EasyPollingOptions {
 }
 ```
 
-## Author
+#### 方法
+方法 | 类型 | 描述 | 返回值
+----- | ----- | ----- | -----
+start | Function | 开始轮询 | -
+stop | Function | 结束轮询g | -
+observe | Function | 订阅轮询数据 | data[]
+updateIntervalTime | Function | 更新轮询周期 | -
+
+## 注意事项
+请在`observe`之后调用`start`方法，因为在调用轮询策略时内部我们有初始数据的逻辑
+否则，将丢失初始回调数据。
+
+`e.g`
+```sh
+# 正确用法
+instance.observe(() => {})
+instance.start()
+```
+
+### 作者
 
 👤 **BiYuqi**
-## 🤝 Contributing
+### 🤝 贡献
 
 Contributions, issues and feature requests are welcome!
 
 Feel free to check [issues page](https://github.com/ifakejs/easy-polling/issues). 
 
-## Show your support
+### Show your support
 
 Give a ⭐️ if this project helped you!
 
