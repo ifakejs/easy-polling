@@ -1,3 +1,9 @@
+export function assert(condition: boolean, msg?: string) {
+  if (!condition) {
+    throw new Error(msg || `unexpected compiler condition`)
+  }
+}
+
 /**
  * @param {array} array The array to process.
  * @param {step} [step=1] The length of each chunk

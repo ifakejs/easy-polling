@@ -1,7 +1,7 @@
 import { Q } from './Q'
 import { Emitter } from "./Emitter"
 import { FakeInterval } from "./FakeInterval"
-import { chunk } from "./chunk"
+import { assert, chunk } from "./utils";
 
 /**
  * 一. 单路:
@@ -15,15 +15,15 @@ import { chunk } from "./chunk"
  * 3. 运行时每次取一组，返回给前台, 然后将数据入队
  */
 
-enum runTypes {
+enum RunTypes {
   SINGLE = "single",
   DOUBLE = "double"
 }
 
-type runType = "single" | "double"
+type RunType = "single" | "double"
 
 interface EasyPollingOptions {
-  type: runType
+  type: RunType
   source: any[]
   intervalTime: number
   returnCount: number
@@ -39,19 +39,18 @@ export class EasyPolling extends Emitter {
   public singleResult: any[]
   constructor(options: EasyPollingOptions) {
     super()
-    const { source, intervalTime, returnCount } = options
-    if (!source || !Array.isArray(source) || !intervalTime || !returnCount) {
-      throw new Error(`错误的调用参数! \n${JSON.stringify({
-        source: 'any[]',
-        intervalTime: 'number',
-        mode: 'boolean',
-        returnCount: 'number'
-      }, null, 2)}`)
-    }
+    const { source, intervalTime, returnCount, type } = options
+
+    assert(Array.isArray(source), "Required array for source type.")
+    assert(!!intervalTime, "Required a number type for intervalTime")
+    assert(!!returnCount, "Required a number type for returnCount")
+
+    const checkType = RunTypes.SINGLE === type || RunTypes.DOUBLE === type
+    assert(checkType, "Valid type value is 'single' or 'double'")
 
     this.options = options
 
-    // 队列 -> 处理所有播放地址数据
+    // 队列 -> 处理所有数据
     this.mainQueue = new Q()
 
     /**
@@ -73,7 +72,7 @@ export class EasyPolling extends Emitter {
    **/
   initQueue() {
     const { source, type, returnCount } = this.options
-    if (type === runTypes.SINGLE) {
+    if (type === RunTypes.SINGLE) {
       source.forEach(item => {
         this.mainQueue.enqueue(item)
       })
@@ -102,7 +101,7 @@ export class EasyPolling extends Emitter {
   beforeStart() {
     const { type } = this.options
     return new Promise(resolve => {
-      if (type === runTypes.SINGLE) {
+      if (type === RunTypes.SINGLE) {
         this.beforeRunSingle()
         resolve(true)
       } else {
@@ -114,7 +113,7 @@ export class EasyPolling extends Emitter {
 
   runAdapter() {
     const { type } = this.options
-    if (type === runTypes.SINGLE) {
+    if (type === RunTypes.SINGLE) {
       this.runSingle()
     } else {
       this.runDouble()

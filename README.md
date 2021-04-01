@@ -74,10 +74,10 @@ yarn start:demo
 
 - 参数
 ```ts
-type runType = "single" | "double"
+type RunType = "single" | "double"
 
 interface EasyPollingOptions {
-  type: runType // polling type
+  type: RunType // polling type
   source: any[] // Data source
   intervalTime: number // ms
   returnCount: number // Data returned in one cycle
