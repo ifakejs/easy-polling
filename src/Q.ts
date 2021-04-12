@@ -2,21 +2,21 @@
  * 队列类
  */
 
-export class Q {
-  q: any[]
+export class Q<T> {
+  q: T[]
   constructor() {
     this.q = []
   }
 
-  enqueue<T>(data: T) {
+  enqueue(data: T) {
     this.q.push(data)
   }
 
-  dequeue() {
+  dequeue(): T | undefined {
     return this.q.shift()
   }
 
-  front() {
+  front(): T {
     return this.q[0]
   }
 

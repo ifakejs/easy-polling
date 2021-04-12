@@ -3,7 +3,7 @@
 ![Npm Bundle Size](https://img.shields.io/bundlephobia/min/@ifake/easy-polling)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-> 针对视频多屏播放需求: 轮询策略，包括单路依次轮询和多路同时轮询..
+> 针对视频多屏播放需求: 轮巡策略，包括单路依次轮巡和多路同时轮巡..
 
 本项目的脚手架来自 [pkg](https://github.com/ifakejs/pkg)
 
@@ -87,13 +87,13 @@ interface EasyPollingOptions {
 #### 方法
 方法 | 类型 | 描述 | 返回值
 ----- | ----- | ----- | -----
-start | Function | 开始轮询 | -
-stop | Function | 结束轮询g | -
-observe | Function | 订阅轮询数据 | data[]
-updateIntervalTime | Function | 更新轮询周期 | -
+start | Function | 开始轮巡 | -
+stop | Function | 结束轮巡g | -
+observe | Function | 订阅轮巡数据 | data[]
+updateIntervalTime | Function | 更新轮巡周期 | -
 
 ## 注意事项
-请在`observe`之后调用`start`方法，因为在调用轮询策略时内部我们有初始数据的逻辑
+请在`observe`之后调用`start`方法，因为在调用轮巡策略时内部我们有初始数据的逻辑
 否则，将丢失初始回调数据。
 
 `e.g`

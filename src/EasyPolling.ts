@@ -1,14 +1,14 @@
 import { Q } from './Q'
 import { Emitter } from "./Emitter"
 import { FakeInterval } from "./FakeInterval"
-import {assert, checkPollingNumber, chunk} from "./utils";
+import { assert, checkPollingNumber, chunk } from "./utils";
 
 /**
  * 一. 单路:
  * 1. 数据项加入队列
  * 2. 初始化取出初始化需要的数据(returnCount)
- * 3. 轮询开始时每次取一个(队列的头部永远是即将要返回的), 同时维护一个播放队列索引(为了记录每个数据在当前运行中的位置)
- * 4. 轮询时,每次取一个即将要返回的，索引队列取出它的位置，进行播放列表替换位置, 返回最新数据, 然后将数据入队
+ * 3. 轮巡开始时每次取一个(队列的头部永远是即将要返回的), 同时维护一个播放队列索引(为了记录每个数据在当前运行中的位置)
+ * 4. 轮巡时,每次取一个即将要返回的，索引队列取出它的位置，进行播放列表替换位置, 返回最新数据, 然后将数据入队
  * 二. 多路
  * 1. 分组(根据returnCount)确定每一次返回的数据, 并加入队列
  * 2. 初始化数据
@@ -31,12 +31,15 @@ interface EasyPollingOptions {
 
 const EMITTER_KEY = "EMITTER_KEY"
 
+type MainQueueType = string | string[]
+type SnapDataType = MainQueueType
+
 export class EasyPolling extends Emitter {
   public options: EasyPollingOptions
-  public mainQueue: Q
-  public trackerQueue: Q
+  public mainQueue: Q<MainQueueType>
+  public trackerQueue: Q<number>
   private runTimer: FakeInterval | null
-  public singleResult: any[]
+  public snapData: SnapDataType[]
   constructor(options: EasyPollingOptions) {
     super()
     const { source, intervalTime, returnCount, type } = options
@@ -64,7 +67,7 @@ export class EasyPolling extends Emitter {
     this.runTimer = null
 
     // 单路数据暂存
-    this.singleResult = []
+    this.snapData = []
   }
 
   /**
@@ -89,14 +92,14 @@ export class EasyPolling extends Emitter {
     this.runTimer = new FakeInterval()
     // 初始化队列数据
     this.initQueue()
-    // 轮询之前的第一轮数据初始化
+    // 轮巡之前的第一轮数据初始化
     await this.beforeStart()
-    // 开始轮询
+    // 开始轮巡
     this.runTimer.run(this.runAdapter.bind(this), this.options.intervalTime)
   }
 
   /**
-   * 轮询开始前取出初始化数据
+   * 轮巡开始前取出初始化数据
    */
   beforeStart() {
     const { type } = this.options
@@ -123,7 +126,7 @@ export class EasyPolling extends Emitter {
   runDouble() {
     // Get target data from queue
     const target = this.mainQueue.dequeue()
-    this.mainQueue.enqueue(target)
+    target && this.mainQueue.enqueue(target)
     // Expose the data by trigger the event
     this.trigger(EMITTER_KEY, target)
   }
@@ -132,28 +135,28 @@ export class EasyPolling extends Emitter {
     const { returnCount } = this.options
     for (let i = 0; i < returnCount; i++) {
       const target = this.mainQueue.dequeue()
-      this.singleResult.push(target)
-      this.mainQueue.enqueue(target)
+      this.snapData.push(target as MainQueueType)
+      this.mainQueue.enqueue(target as MainQueueType)
 
       // Record index for each screen
       this.trackerQueue.enqueue(i)
     }
     // Expose the data by trigger the event
-    this.trigger(EMITTER_KEY, this.singleResult)
+    this.trigger(EMITTER_KEY, this.snapData)
   }
 
   runSingle() {
     const target = this.mainQueue.dequeue()
-    this.mainQueue.enqueue(target)
+    this.mainQueue.enqueue(target as MainQueueType)
     // Pick the need to be replaced index
-    const recordIndex = this.trackerQueue.dequeue()
+    const recordIndex = this.trackerQueue.dequeue() as number
     // Replace the target screen data
-    this.singleResult.splice(recordIndex, 1, target)
+    this.snapData.splice(recordIndex, 1, target as MainQueueType)
     // Insert the head index to the queue
     this.trackerQueue.enqueue(recordIndex)
 
     // Expose the data by trigger the event
-    this.trigger(EMITTER_KEY, this.singleResult)
+    this.trigger(EMITTER_KEY, this.snapData)
   }
 
   observe(cb: Function) {
@@ -169,7 +172,7 @@ export class EasyPolling extends Emitter {
   stop() {
     !this.mainQueue.isEmpty && this.mainQueue.clear()
     !this.trackerQueue.isEmpty && this.trackerQueue.clear()
-    this.runTimer && this.runTimer.stop()
+    this.runTimer?.stop()
     this.runTimer = null
   }
 }
