@@ -1,7 +1,7 @@
 import { Q } from "../src/Q"
 
 describe("Q", () => {
-  let instance: Q
+  let instance: Q<number>
   beforeEach(() => {
     instance = new Q()
   })

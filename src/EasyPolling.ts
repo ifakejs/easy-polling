@@ -27,12 +27,17 @@ interface EasyPollingOptions {
   source: any[]
   intervalTime: number
   returnCount: number
+  replaceCount?: number
 }
 
 const EMITTER_KEY = "EMITTER_KEY"
 
 type MainQueueType = string | string[]
 type SnapDataType = MainQueueType
+
+const defaultOptions = {
+  replaceCount: 1
+}
 
 export class EasyPolling extends Emitter {
   public options: EasyPollingOptions
@@ -51,7 +56,7 @@ export class EasyPolling extends Emitter {
     const checkType = RunTypes.SINGLE === type || RunTypes.DOUBLE === type
     assert(checkType, "Valid type value is 'single' or 'double'")
 
-    this.options = options
+    this.options = { ...defaultOptions, ...options }
 
     // 队列 -> 处理所有数据
     this.mainQueue = new Q()
@@ -146,14 +151,17 @@ export class EasyPolling extends Emitter {
   }
 
   runSingle() {
-    const target = this.mainQueue.dequeue()
-    this.mainQueue.enqueue(target as MainQueueType)
-    // Pick the need to be replaced index
-    const recordIndex = this.trackerQueue.dequeue() as number
-    // Replace the target screen data
-    this.snapData.splice(recordIndex, 1, target as MainQueueType)
-    // Insert the head index to the queue
-    this.trackerQueue.enqueue(recordIndex)
+    const repeat = this.options.replaceCount as number
+    for (let i = 0; i < repeat; i++) {
+      const target = this.mainQueue.dequeue()
+      this.mainQueue.enqueue(target as MainQueueType)
+      // Pick the need to be replaced index
+      const recordIndex = this.trackerQueue.dequeue() as number
+      // Replace the target screen data
+      this.snapData.splice(recordIndex, 1, target as MainQueueType)
+      // Insert the head index to the queue
+      this.trackerQueue.enqueue(recordIndex)
+    }
 
     // Expose the data by trigger the event
     this.trigger(EMITTER_KEY, this.snapData)

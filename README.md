@@ -80,7 +80,8 @@ interface EasyPollingOptions {
   type: RunType // polling type
   source: any[] // Data source
   intervalTime: number // ms
-  returnCount: number // Data returned in one cycle
+  returnCount: number // 返回的数据(每次展示几屏)个数
+  replaceCount: number // 仅在single模式生效 每次替换几个视频
 }
 ```
 
